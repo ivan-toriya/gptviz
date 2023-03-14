@@ -170,6 +170,7 @@ with tab2:
     csv_file = st.file_uploader("Upload your data", type="csv")
     if csv_file:
         df = load_sample_dataset(csv_file)
+        dataset = "custom"
         st.dataframe(df)
 
 
