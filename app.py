@@ -154,6 +154,7 @@ with tab1:
 with tab2:
     csv_file = st.file_uploader("Upload your data", type="csv")
     if csv_file:
+        dataset = "custom"
         df = load_csv_data(csv_file)
         st.dataframe(df)
 
@@ -223,6 +224,7 @@ with st.expander("Conversation example", expanded=True):
     """
     )
 with st.form("prompt_form", clear_on_submit=True):
+    st.text(f"Selected dataset: {dataset}")
     prompt_input = st.text_input("Enter your prompt here")
     submit_button = st.form_submit_button("Submit")
     if submit_button:
