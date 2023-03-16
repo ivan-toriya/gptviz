@@ -34,62 +34,45 @@ st.set_page_config(
 
 # Header
 
-st.title("OpenAI Codex + Plotly. Demo")
-st.text("Generate graphs with natural language prompts")
+st.title("GPTViz")
+st.text("Data visualization using natural language prompts")
+st.text("Supported libraries: Plotly")
 st.markdown("---")
 
 
 # Authentication
+openai.api_key = os.getenv("OPENAI_API_KEY")
+openai.organization = os.getenv("OPENAI_ORGANIZATION")
 
-with st.expander("OpenAI Authentication"):
-    st.markdown(f"[OpenAI API](https://status.openai.com/): {get_api_status()}")
-    if os.getenv("OPENAI_API_KEY"):
-        api_value = os.getenv("OPENAI_API_KEY")
-    else:
-        api_value = ""
-    openai.api_key = st.text_input(
-        "Enter your OpenAI API key. [How to get it?](https://help.openai.com/en/articles/4936850-where-do-i-find-my-secret-api-key)",
-        value=api_value,
-        type="password",
+st.markdown(f"[OpenAI API](https://status.openai.com/): {get_api_status()}")
+choice = st.radio(
+    "Model to use",
+    (["code-cushman-001", "code-davinci-002 (Recommended)"]),
+    index=1,
+    help="code-cushman-001 faster, but less accurate; code-davinci-002 slower, but more accurate.",
+)  # code-cushman-001 not working with suffixes
+MODEL = choice.split(" ")[0]
+
+if st.button("Check connection"):
+    st.cache_data.clear()
+    prompt = f'>>> print("Hello! I\'m {MODEL} model.")'
+    response = get_completion_response(
+        model=MODEL,
+        prompt=prompt,
+        temperature=0,
+        top_p=1,
+        max_tokens=40,
+        best_of=1,
+        stop=[">>>", "\n\n", "\n#", "```"],
     )
-
-    if os.getenv("OPENAI_ORGANIZATION"):
-        org_value = os.getenv("OPENAI_ORGANIZATION")
-    else:
-        org_value = ""
-    openai.organization = st.text_input(
-        "(Optional) Enter your OpenAI organization ID",
-        value=org_value,
-        type="password",
-    )
-
-    MODEL = st.radio(
-        "Model to use",
-        (["code-cushman-001", "code-davinci-002"]),
-        index=0,
-        help="code-cushman-001 faster, but less accurate; code-davinci-002 slower, but more accurate.",
-    )  # code-cushman-001 not working with suffixes
-    if st.button("Check connection"):
-        st.cache_data.clear()
-        prompt = f'>>> print("Hello! I\'m {MODEL} model.")'
-        response = get_completion_response(
-            model=MODEL,
-            prompt=prompt,
-            temperature=0,
-            top_p=1,
-            max_tokens=40,
-            best_of=1,
-            stop=[">>>", "\n\n", "\n#", "```"],
-        )
-        if response:
-            st.markdown(f"Prompt: `{prompt}`")
-            st.markdown("Response: ")
-            st.code(response["choices"][0]["text"])
-            st.markdown(f"Total tokens used: {response.usage.total_tokens}")
+    if response:
+        st.markdown(f"Prompt: `{prompt}`")
+        st.markdown("Response: ")
+        st.code(response["choices"][0]["text"])
+        st.markdown(f"Total tokens used: {response.usage.total_tokens}")
 
 
 # Data loading
-
 
 @st.cache_resource
 def load_sample_dataset(url, dataset):
@@ -102,11 +85,11 @@ def load_csv_data(file):
     df = pd.read_csv(file)
     return df
 
-
+st.subheader("Data input")
 tab1, tab2 = st.tabs(["Sample Datasets", "Upload CSV"])
 
 with tab1:
-    with st.expander("Dataset settings"):
+    with st.expander("Dataset settings", expanded=True):
         datasets = {
             "anagrams": "A dataset containing results of an experiment on the time taken to solve anagrams under different conditions.",
             "anscombe": "A dataset containing four sets of data that have the same statistical properties, but different patterns when plotted.",
@@ -182,7 +165,7 @@ def draw_plotly_chart(fig):
 
 
 def show_executed_code():
-    with st.expander("Generated code"):
+    with st.expander("Generated code", expanded=True):
         st.code(final_code + "\nfig.show()  # st.plotly_chart(fig)")
 
 
@@ -198,20 +181,25 @@ if "undo_prompt" not in st.session_state:
 if "redo_prompt" not in st.session_state:
     st.session_state["redo_prompt"] = deque()
 
+st.subheader("Conversation")
 with st.expander("Conversation example", expanded=True):
     st.markdown(
         """
     *Using the iris dataset*
     ```
-    You: Create a scatter plot of sepal length and petal length grouped by species)
+    You: Create a scatter plot of sepal length and petal length grouped by species
 
     [Model generates a scatter plot]
+
+    You: Change to histogram
+
+    [Model creates a histogram]
 
     You: Create a 3d scatter plot
 
     [Model generates a 3d scatter plot]
 
-    You: Add title "My lovely iris collection"
+    You: Add title \"My lovely iris collection\"
 
     [Model adds a title]
     ```
@@ -222,7 +210,7 @@ with st.expander("Conversation example", expanded=True):
 
     [Model generates a histogram]
 
-    You: Create a bar chart of cut by price
+    You: Change to bar chart of cut by price
 
     [Model generates a bar chart]
 
