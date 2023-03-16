@@ -154,7 +154,7 @@ with tab1:
 with tab2:
     csv_file = st.file_uploader("Upload your data", type="csv")
     if csv_file:
-        df = load_sample_dataset(csv_file)
+        df = load_csv_data(csv_file)
         st.dataframe(df)
 
 
