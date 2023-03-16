@@ -74,6 +74,7 @@ if st.button("Check connection"):
 
 # Data loading
 
+
 @st.cache_resource
 def load_sample_dataset(url, dataset):
     df = pd.read_csv(f"{url}{dataset}.csv")
@@ -84,6 +85,7 @@ def load_sample_dataset(url, dataset):
 def load_csv_data(file):
     df = pd.read_csv(file)
     return df
+
 
 st.subheader("Data input")
 tab1, tab2 = st.tabs(["Sample Datasets", "Upload CSV"])
