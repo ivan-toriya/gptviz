@@ -187,8 +187,8 @@ def show_executed_code():
         st.code(final_code + "\nfig.show()  # st.plotly_chart(fig)")
 
 
-sample_data = df.sample(5).to_csv(index=False)
-sample_data = sample_data.replace("\n", "\n# ")[:-3]
+# sample_data = df.sample(5).to_csv(index=False)
+# sample_data = sample_data.replace("\n", "\n# ")[:-3]
 
 if "undo_code" not in st.session_state:
     st.session_state["undo_code"] = deque()
