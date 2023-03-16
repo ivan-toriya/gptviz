@@ -3,7 +3,7 @@ Create data visualization with GPT using natural language prompts.
 
 ## How to try the demo?
 
-[Web App](https://ivan-toriya-gptviz-app-q3xsmb.streamlit.app/)
+[Web App](https://gtpviz.streamlit.app/)
 
 ![chrome_vfzsVlffCo](https://user-images.githubusercontent.com/43750521/224649984-91825229-b3c7-44ae-baf0-a32cbad8897a.gif)
 
