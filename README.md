@@ -1,4 +1,4 @@
-# gptviz
+# gptviz (deprecated)
 Create data visualization with GPT using natural language prompts.
 
 ## How to try the demo?
